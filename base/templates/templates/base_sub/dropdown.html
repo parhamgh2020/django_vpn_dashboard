@@ -1,0 +1,10 @@
+<div class="hidden md:block dropdown dropdown-end">
+  <label tabindex="0" class="btn m-1">dashboard</label>
+  <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+    <li><a href="{% url 'base:profile' %}">Profile</a></li>
+    <li><a href="{% url 'dashboard:dashboard' %}">dashboard</a></li>
+    {% comment %} <li><a href="{% url 'base:donate' %}">donate</a></li> {% endcomment %}
+    <hr>
+    <li><a href="{% url 'base:logout' %}" class="text-red-500">log out</a></li>
+  </ul>
+</div>
