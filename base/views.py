@@ -1,54 +1,90 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import auth
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import auth
+from django.shortcuts import redirect, render
+
+from .forms import SignupForm, MessageForm, LoginForm
 
 
-def index(request):
-    return render(request, './home.html')
+def home(request):
+    template_name = 'home.html'
+    context = {}
+    if request.method == 'GET':
+        return render(request, template_name, context)
 
 
-# def register(request):
-#     form = CreateUserForm()
-#     if request.method == 'POST':
-#         form = CreateUserForm(request.POST)
-#         if form.is_valid():
-#             current_user = form.save(commit=False)
-#             form.save()
-#             profile = Profile.objects.create(user=current_user)
-#             return redirect("my-login")
-#     context = {'form': form}
-#     return render(request, 'lynx/register.html', context=context)
-#
-#
-# def my_login(request):
-#     form = LoginForm()
-#     if request.method == 'POST':
-#         form = LoginForm(request, data=request.POST)
-#         if form.is_valid():
-#             username = request.POST.get('username')
-#             password = request.POST.get('password')
-#             user = authenticate(request, username=username, password=password)
-#             if user is not None:
-#                 auth.login(request, user)
-#                 return redirect("dashboard")
-#     context = {'form': form}
-#     return render(request, 'lynx/my-login.html', context=context)
-#
-#
-# def user_logout(request):
-#     auth.logout(request)
-#     return redirect("")
-#
-#
-# @login_required(login_url='my-login')
-# def dashboard(request):
-#     profile_pic = Profile.objects.get(user=request.user)
-#     context = {'profilePic': profile_pic}
-#     return render(request, 'lynx/dashboard.html', context=context)
-#
-#
+def contact(request):
+    template_name = 'contact.html'
+    context = {}
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('/home/')
+    else:
+        form = MessageForm()
+        context['form'] = form
+
+    return render(request, template_name, context)
+
+
+def signup(request):
+    template_name = 'signup.html'
+    context = {}
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/login/')
+    else:
+        form = SignupForm()
+        context['form'] = form
+
+    return render(request, template_name, context)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('')
+
+
+def login(request):
+    template_name = 'login.html'
+    context = {}
+    form = LoginForm()
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth.login(request, user)
+                return redirect("dashboard:dashboard")
+    context = {'form': form}
+    return render(request, 'login.html', context=context)
+
+
+@login_required(login_url='base:login')
+def profile(request):
+    template_name = 'profile.html'
+    context = {}
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('/profile/')
+    else:
+        form = SignupForm()
+        context['form'] = form
+
+    return render(request, template_name, context)
+
 # @login_required(login_url='my-login')
 # def profile_management(request):
 #     user_form = UpdateUserForm(instance=request.user)
@@ -77,8 +113,3 @@ def index(request):
 #         return redirect("")
 #     return render(request, 'lynx/delete-account.html')
 #
-
-
-
-
-

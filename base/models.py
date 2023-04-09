@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User as DjangoUser
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -12,7 +12,7 @@ class Verification(models.Model):
         return f"identification_code: {self.verification_code}, permission_num: {self.permission_num}"
 
 
-class User(AbstractUser):
+class User(DjangoUser):
     identification_code = models.ForeignKey(Verification,
                                             null=True,
                                             on_delete=models.PROTECT)
